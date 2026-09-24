@@ -17,17 +17,20 @@ V = [v; flip(v(2:N))];  % periodic even function in theta-space
 plotThetaSpace(V)
 an = real(fft(V)) / N;
 reconstructQ(an, 6, V)
-
-Vhat = real(fft(V));
+bn = 1i * (-N+1:N)' .* fftshift(an);    % differentiation in fourier space
+W = real(ifft(ifftshift(bn))) * N;
+w = -1./sqrt(1-x.^2) .* W(1:N+1);   % transform back to x-space (undefined at endpoints)
+w(1) = sum(()) 
 
 end
 
 
 function test()
 
-[D,x] = cheb(32);
+[D,x] = cheb(16);
 u = exp(x).*sin(5*x);
-chebdct(u)
+w = chebdct(u);
+myplot(x, w)
 
 end
 
@@ -57,6 +60,6 @@ y = sin(theta);
 hold on
 plot3(x, y, Q, '-o', x, y, 0*x-3, '-k')
 hold off
-fprintf("Error = %e", norm(Q(1:end-1)-V))
+fprintf("Error = %e\n", norm(Q(1:end-1)-V))
 
 end
